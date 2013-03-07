@@ -73,4 +73,9 @@ public class Array2DStack implements Stack{
     @Override
     public void free() {
     }
+
+    @Override
+    public int peek() {
+        return chunks[curChunk][nextTop - 1];
+    }
 }

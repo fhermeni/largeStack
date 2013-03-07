@@ -6,6 +6,7 @@ public class Bench {
         long d = System.currentTimeMillis();
         for (int i = 1; i <= nbValues; i++) {
             st.push(i);
+            assert st.peek() == i : "Expected " + i + " but was " + st.peek();
         }
         return System.currentTimeMillis() - d;
 
@@ -23,14 +24,15 @@ public class Bench {
 
 
     public static void main(String []args) {
-		int nbValues = 20000000;
-        int times = 200;
+		int nbValues = 200000000;
+        int times = 100;
 
-        String [] ids = new String[]{/*"1D", "2D", */"U2D"};
+        String [] ids = new String[]{/*"I2D","U2D",*/"1D"/*, "2D"*/};
         for (String id : ids) {
             long d = benchPush(id, nbValues, times);
-            System.out.println(id + ": " + times + "x" + "(" + nbValues + " pushes) in " + d + " ms");
+            System.err.println(id + ": " + times + "x" + "(" + nbValues + " pushes) in " + d + " ms");
 		}
+        System.err.println("end");
 	}
 
     private static Stack makeStack(String id) {
@@ -38,6 +40,8 @@ public class Bench {
             return new Array2DStack(10000);
         else if (id.equals("1D")) {
             return new ArrayStack(10000);
+        } else if (id.equals("I2D")) {
+            return new IntBuffer2DStack(10000);
         } else if (id.equals("U2D")) {
             try {
                 return new Unsafe2DStack(10000);

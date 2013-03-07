@@ -6,7 +6,7 @@ public interface Stack {
 
 	int pop();
 
-	long size();
-
     void free();
+
+    int peek();
 }

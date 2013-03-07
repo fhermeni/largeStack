@@ -31,12 +31,13 @@ public class ArrayStack implements Stack {
 		return values[--nb];
 	}
 
-	public long size() {
-		return nb;
-	}
-
     @Override
     public void free() {
 
+    }
+
+    @Override
+    public int peek() {
+        return values[nb - 1];
     }
 }
