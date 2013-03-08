@@ -13,7 +13,6 @@ public class Array2DStack implements Stack{
 	
 	private long capacity;
 
-    private long size;
     public Array2DStack() {
 		this(DEFAULT_CHUNK_SIZE);
 	}
@@ -38,11 +37,9 @@ public class Array2DStack implements Stack{
 				bigger[l] = new int[inc];				
 				chunks = bigger;						
 				capacity += inc;
-                //System.out.println(prettyChunks());
 			}
 			nextTop=0;
 		}
-        size++;
 		chunks[curChunk][nextTop++] = v;
 	}
 
@@ -55,10 +52,6 @@ public class Array2DStack implements Stack{
 			System.err.println("error");
 		}
 		return chunks[curChunk][--nextTop];
-	}
-
-	public long size() {
-		return size;
 	}
 
     private String prettyChunks() {

@@ -8,12 +8,11 @@ public class ArrayStack implements Stack {
 
 	public static final int DEFAULT_SIZE = 100000;
 
-	private int inc;
 	public ArrayStack(int s) {
 		values = new int[s];
 		nb = 0;
-		inc = s;
 	}
+
 	public ArrayStack() {
 		this(DEFAULT_SIZE);
 	}
