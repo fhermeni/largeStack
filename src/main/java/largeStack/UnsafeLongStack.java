@@ -21,6 +21,7 @@ public class UnsafeLongStack implements LongStack {
 
     private int chunkSize;
 
+
     public static final int SIZEOF_LONG = 8;
 
     public UnsafeLongStack() throws Exception {

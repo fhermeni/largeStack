@@ -49,7 +49,7 @@ public class Bench {
     public static void main(String []args) {
 		int nbValues = 100000000;
         int size = 5000;
-        benchStack("ArrayLongStack", size, nbValues);
+        benchStack("UnsafeLinkedLongStack", size, nbValues);
 	}
 
     private static LongStack makeStack(String id, int size) {
@@ -61,7 +61,20 @@ public class Bench {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        } else if (id.equals("UnsafeLinkedVariableLongStack")) {
+            try {
+                return new UnsafeLinkedVariableLongStack(size);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }  else if (id.equals("UnsafeLinkedLongStack")) {
+            try {
+                return new UnsafeLinkedLongStack(size);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+
         throw new UnsupportedOperationException();
     }
 }
