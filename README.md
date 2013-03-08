@@ -2,15 +2,13 @@
 
 ## Environment
 * JVM: 1.6.0_29
-* JVM options: -server -ea -Xmx4G -Xms4G
+* JVM options: -server -Xmx4G -Xms4G
 * Machine: Macbook Core i7 2.8GHz, 8GB 1333Hz DDR
 * OS:OS X 10.7.5
 
-#Result:
+## Results ##
 
-With assertions enabled to perform a peek:
+### 100,000,000 of push() then pop() ###
 
-* Array2DStack: 100x(200000000 pushes) in 179045 ms
-* ArrayStack: 100x(200000000 pushes) in 138021 ms
-* IntBuffer2DStack: 100x(200000000 pushes) in 206271 ms
-* Unsafe2DStack: 100x(200000000 pushes) in 71892 ms
+* ArrayLongStack: 1181 ms (push:1176 ms; pop:5ms)
+* UnsafeLongStack: 910 ms (push:805 ms; pop:105ms)

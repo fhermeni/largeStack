@@ -4,7 +4,10 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
-public class Unsafe2DStack implements Stack{
+/**
+ * An implementation with unsafe with stack extends having every time the same size.
+ */
+public class UnsafeLongStack implements LongStack {
 
 	public static final int DEFAULT_CHUNK_SIZE = 10000;
 
@@ -18,24 +21,24 @@ public class Unsafe2DStack implements Stack{
 
     private int chunkSize;
 
-    public static final int SIZEOF_INT = 4;
+    public static final int SIZEOF_LONG = 8;
 
-    public Unsafe2DStack() throws Exception {
+    public UnsafeLongStack() throws Exception {
 		this(DEFAULT_CHUNK_SIZE);
 	}
 
-	public Unsafe2DStack(int size) throws Exception {
+	public UnsafeLongStack(int size) throws Exception {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
             unsafe = (Unsafe)field.get(null);
-            this.chunkSize = size * SIZEOF_INT;
+            this.chunkSize = size * SIZEOF_LONG;
             chunks = new long[1];
 			chunks[0] = unsafe.allocateMemory(this.chunkSize);
             curChunk = 0;
             nextTop = 0;
 	}
 
-	public void push(int v) {						
+	public void push(long v) {
 		if (nextTop == chunkSize) {
             curChunk++;
             int l = chunks.length;
@@ -43,8 +46,8 @@ public class Unsafe2DStack implements Stack{
                 increase(l);
 			}
 		}
-        unsafe.putInt(chunks[curChunk] + nextTop, v);
-        nextTop+=4;
+        unsafe.putLong(chunks[curChunk] + nextTop, v);
+        nextTop += SIZEOF_LONG;
 	}
 
     private void increase(int l) {
@@ -55,12 +58,12 @@ public class Unsafe2DStack implements Stack{
         nextTop=0;
     }
 
-	public int pop() {
+	public long pop() {
 
         if (nextTop > 0) {
-            nextTop -=SIZEOF_INT;
+            nextTop -=SIZEOF_LONG;
         } else {
-            nextTop = chunkSize - SIZEOF_INT;
+            nextTop = chunkSize - SIZEOF_LONG;
             --curChunk;
         }
         return unsafe.getInt(chunks[curChunk] + nextTop);
@@ -74,7 +77,7 @@ public class Unsafe2DStack implements Stack{
     }
 
     @Override
-    public int peek() {
-        return unsafe.getInt(chunks[curChunk] + nextTop - SIZEOF_INT);
+    public long peek() {
+        return unsafe.getInt(chunks[curChunk] + nextTop - SIZEOF_LONG);
     }
 }

@@ -1,32 +1,34 @@
 package largeStack;
 
-public class ArrayStack implements Stack {
+public class ArrayLongStack implements LongStack {
 	
-	private int [] values;
+	private long [] values;
 
 	private int nb;
 
 	public static final int DEFAULT_SIZE = 100000;
 
-	public ArrayStack(int s) {
-		values = new int[s];
+	public ArrayLongStack(int s) {
+		values = new long[s];
 		nb = 0;
 	}
 
-	public ArrayStack() {
+	public ArrayLongStack() {
 		this(DEFAULT_SIZE);
 	}
 
-	public void push(int v) {
+    @Override
+	public void push(long v) {
 		if (nb == values.length) {
-			int [] bigger = new int[values.length * 3 / 2];			
+			long [] bigger = new long[values.length * 3 / 2];
 			System.arraycopy(values, 0, bigger, 0, values.length);
 			values = bigger;
 		}
 		values[nb++] = v;
 	}
 
-	public int pop() {
+    @Override
+	public long pop() {
 		return values[--nb];
 	}
 
@@ -36,7 +38,7 @@ public class ArrayStack implements Stack {
     }
 
     @Override
-    public int peek() {
+    public long peek() {
         return values[nb - 1];
     }
 }
