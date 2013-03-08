@@ -15,15 +15,15 @@ public class UnsafeLinkedLongStack implements LongStack {
 
 	private IndexCell curChunk;
 
-	private int nextTop;
-
     private Unsafe unsafe;
 
     private int chunkSize;
 
-    private IndexCell head;
-
     private IndexCell tail;
+
+    private long sp;
+
+    private long endOfChunk;
 
     public static final int SIZEOF_LONG = 8;
 
@@ -36,70 +36,74 @@ public class UnsafeLinkedLongStack implements LongStack {
             field.setAccessible(true);
             unsafe = (Unsafe)field.get(null);
             this.chunkSize = size * SIZEOF_LONG;
-            nextTop = 0;
-            head = new IndexCell(unsafe.allocateMemory(this.chunkSize));
-            curChunk = head;
-            tail = head;
+            tail = new IndexCell(unsafe.allocateMemory(this.chunkSize));
+            curChunk = tail;
+            sp = curChunk.base;
+            endOfChunk = sp + chunkSize;
 	}
 
 	public void push(long v) {
-		if (nextTop == chunkSize) {
+		if (sp == endOfChunk) {
             if (curChunk.next == null) {
                 increase();
+            } else {
+                curChunk = curChunk.next;
+                sp = curChunk.base;
+                endOfChunk = sp + chunkSize;
             }
 		}
-        unsafe.putLong(curChunk.value + nextTop, v);
-        nextTop += SIZEOF_LONG;
+        unsafe.putLong(sp, v);
+        sp += SIZEOF_LONG;
 	}
 
     private void increase() {
-        curChunk = new IndexCell(unsafe.allocateMemory(chunkSize), tail, null);
+        curChunk = new IndexCell(unsafe.allocateMemory(chunkSize), tail);
         tail.next = curChunk;
         tail = curChunk;
-        nextTop=0;
+        sp = curChunk.base;
+        endOfChunk = curChunk.base + chunkSize;
     }
 
 	public long pop() {
-
-        if (nextTop > 0) {
-            nextTop -=SIZEOF_LONG;
+        if (sp > curChunk.base) {
+            sp -= SIZEOF_LONG;
         } else {
-            nextTop = chunkSize - SIZEOF_LONG;
             curChunk = curChunk.prev;
+            sp = curChunk.base + chunkSize - SIZEOF_LONG;
         }
-        return unsafe.getInt(curChunk.value + nextTop);
+        return unsafe.getInt(sp);
 	}
 
     @Override
     public void free() {
-        IndexCell c = head;
+        IndexCell c = tail;
         while (c != null) {
-            unsafe.freeMemory(c.value);
-            c = c.next;
+            unsafe.freeMemory(c.base);
+            c = c.prev;
         }
     }
 
     @Override
     public long peek() {
-        return unsafe.getInt(curChunk.value + nextTop - SIZEOF_LONG);
+        return unsafe.getInt(sp - SIZEOF_LONG);
     }
 
     static class IndexCell {
 
-        long value;
+        long base;
 
         IndexCell next;
 
         IndexCell prev;
 
-        public IndexCell(long v, IndexCell p, IndexCell n) {
-            this.value = v;
-            this.next = n;
+        public IndexCell(long v, IndexCell p) {
+            this.base = v;
+            this.next = null;
             this.prev = p;
         }
 
         public IndexCell(long v) {
-            value = v;
+            base = v;
             next = null;
             prev = null;
         }
