@@ -17,7 +17,7 @@ public class UnsafeLinkedLongStack implements LongStack {
 
     private Unsafe unsafe;
 
-    private int chunkSize;
+    private final int chunkSize;
 
     private IndexCell tail;
 
@@ -97,15 +97,12 @@ public class UnsafeLinkedLongStack implements LongStack {
         IndexCell prev;
 
         public IndexCell(long v, IndexCell p) {
-            this.base = v;
-            this.next = null;
-            this.prev = p;
+            base = v;
+            prev = p;
         }
 
         public IndexCell(long v) {
             base = v;
-            next = null;
-            prev = null;
         }
     }
 }
