@@ -51,21 +51,22 @@ public class UnsafeLinkedVariableLongStack implements LongStack {
                 increase();
             }
 		}
-        unsafe.putLong(tail.value + nextTop, v);
+        unsafe.putLong(curChunk.value + nextTop, v);
         nextTop += SIZEOF_LONG;
 	}
 
     private void increase() {
-        long cellCapa = capacity / 2;
+        long c = capacity * 3 /2;
+
+        long cellCapa = c + (c % SIZEOF_LONG); // Need to be sure the amount is a multiple of 8 to not get out the memory
         IndexCell cell = new IndexCell(unsafe.allocateMemory(cellCapa), cellCapa, tail, tail.next);
-        capacity *= (3 / 2);
+        capacity  += cellCapa;
         tail = cell;
         curChunk = cell;
         nextTop=0;
     }
 
 	public long pop() {
-
         if (nextTop > 0) {
             nextTop -=SIZEOF_LONG;
         } else {
@@ -111,6 +112,10 @@ public class UnsafeLinkedVariableLongStack implements LongStack {
             value = v;
             next = null;
             prev = null;
+        }
+
+        public String toString() {
+            return new StringBuilder("@").append(value).append(": ").append(size).toString();
         }
     }
 }

@@ -48,15 +48,14 @@ public class UnsafeLinkedLongStack implements LongStack {
                 increase();
             }
 		}
-        unsafe.putLong(tail.value + nextTop, v);
+        unsafe.putLong(curChunk.value + nextTop, v);
         nextTop += SIZEOF_LONG;
 	}
 
     private void increase() {
-        IndexCell cell = new IndexCell(unsafe.allocateMemory(chunkSize), tail, tail.next);
-        tail.next = cell;
-        tail = cell;
-        curChunk = cell;
+        curChunk = new IndexCell(unsafe.allocateMemory(chunkSize), tail, null);
+        tail.next = curChunk;
+        tail = curChunk;
         nextTop=0;
     }
 
