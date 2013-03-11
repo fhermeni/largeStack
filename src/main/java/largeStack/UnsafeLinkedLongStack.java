@@ -56,14 +56,6 @@ public class UnsafeLinkedLongStack implements LongStack {
         sp += SIZEOF_LONG;
 	}
 
-    private void increase() {
-        curChunk = new IndexCell(unsafe.allocateMemory(chunkSize), tail);
-        tail.next = curChunk;
-        tail = curChunk;
-        sp = curChunk.base;
-        endOfChunk = curChunk.base + chunkSize;
-    }
-
 	public long pop() {
         if (sp > curChunk.base) {
             sp -= SIZEOF_LONG;
@@ -71,7 +63,7 @@ public class UnsafeLinkedLongStack implements LongStack {
             curChunk = curChunk.prev;
             sp = curChunk.base + chunkSize - SIZEOF_LONG;
         }
-        return unsafe.getInt(sp);
+        return unsafe.getLong(sp);
 	}
 
     @Override
