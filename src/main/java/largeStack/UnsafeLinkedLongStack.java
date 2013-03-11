@@ -45,7 +45,11 @@ public class UnsafeLinkedLongStack implements LongStack {
 	public void push(long v) {
 		if (sp == endOfChunk) {
             if (curChunk.next == null) {
-                increase();
+                curChunk = new IndexCell(unsafe.allocateMemory(chunkSize), tail);
+                tail.next = curChunk;
+                tail = curChunk;
+                sp = curChunk.base;
+                endOfChunk = curChunk.base + chunkSize;
             } else {
                 curChunk = curChunk.next;
                 sp = curChunk.base;
