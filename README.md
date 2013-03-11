@@ -12,5 +12,6 @@
 
 * ArrayLongStack: 1181 ms (push:1176 ms; pop:5ms)
 * UnsafeLongStack: 910 ms (push:805 ms; pop:105ms)
-* UnsafeLinkedLongStack: 594 ms (push:485 ms; pop:109ms)
+* UnsafeLinkedLongStack: 577 ms (push:472 ms; pop:105ms)
+
 
